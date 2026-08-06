@@ -1,0 +1,207 @@
+/*
+ * Chrome around the deck: the presenter HUD, the stage, and the sizing reveal.js expects.
+ * Everything here lives inside a shadow root, so none of it can reach the host application's own
+ * styles and none of the application's styles can reach it (runtime constraint 1).
+ *
+ * The HUD keeps its own dark palette in every theme. It is a floating card over someone else's
+ * application, not part of the slide surface, and it has to stay legible over both.
+ */
+
+:host {
+  all: initial;
+}
+
+/* reveal's reset is loaded in here too, so do not rely on the UA rule for [hidden]. */
+[hidden] {
+  display: none !important;
+}
+
+/* ---- Presenter HUD ---------------------------------------------------- */
+
+.hud {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 260px;
+  padding: 12px 14px;
+  font: 400 13px/1.35 ui-sans-serif, -apple-system, "Segoe UI", sans-serif;
+  color: #f4f6f9;
+  background: rgba(16, 33, 60, 0.94);
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.32);
+  z-index: 2147483647;
+}
+
+/* While the deck has the screen the HUD would only repeat what is on it. */
+.hud.presenting {
+  display: none;
+}
+
+.hud-body {
+  cursor: pointer;
+}
+
+.hud-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.hud-next-row {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.hud-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8fb7e0;
+}
+
+.hud-count {
+  font-size: 11px;
+  color: #8a9bb4;
+}
+
+.hud-now {
+  margin-top: 3px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.hud-next {
+  margin-top: 3px;
+  font-size: 14px;
+  color: #c6d3e3;
+}
+
+/* The current slide's CTA, repeated here because the slides that carry one are never opened. */
+.hud-cta:empty {
+  display: none;
+}
+
+.hud-cta-link {
+  display: inline-block;
+  margin-top: 7px;
+  font-size: 12px;
+  color: #8fd0ff;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(143, 208, 255, 0.4);
+}
+
+.hud-cta-link::after {
+  content: " \2197";
+}
+
+.hud-cta-link:hover {
+  color: #cfe9ff;
+  border-bottom-color: #cfe9ff;
+}
+
+/*
+ * Says where to be, not what is on screen. The colour is the kind's own, set inline by the content
+ * script; drawing the label in that colour over a tint of itself keeps any author-chosen colour
+ * legible without having to compute a contrasting text colour.
+ */
+.badge {
+  display: inline-block;
+  margin-right: 7px;
+  padding: 1px 7px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  vertical-align: middle;
+  border-radius: 4px;
+  color: var(--badge);
+  background: color-mix(in srgb, var(--badge) 22%, transparent);
+}
+
+.hud-controls {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.hud-btn {
+  flex: 1;
+  padding: 5px 0;
+  font: 600 15px/1 ui-sans-serif, sans-serif;
+  color: #f4f6f9;
+  background: rgba(255, 255, 255, 0.12);
+  border: 0;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.hud-btn:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+/* ---- Stage ------------------------------------------------------------ */
+
+.stage {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483646;
+  background: var(--bg);
+}
+
+/*
+ * Closed rather than removed, so reveal keeps real dimensions to lay out against.
+ *
+ * Moved off screen rather than merely hidden. reveal sets both visibility:visible and
+ * pointer-events:auto on slide sections, and a descendant saying either beats an ancestor saying
+ * otherwise: the slide would linger after the stage cleared, and a tall slide would go on
+ * swallowing clicks meant for the application underneath. No descendant can escape an ancestor's
+ * transform, so translating the whole stage away leaves nothing behind to intercept anything.
+ *
+ * See docs/runtime-constraints.md #3. This one fails silently.
+ */
+.stage.closed {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-200vw);
+}
+
+/* A peek slide lets the live page show through, for talking over what is already on screen. */
+.stage.peek {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(2px);
+}
+
+.stage.peek .reveal .slides > section:not([data-role="peek"]) {
+  visibility: hidden;
+}
+
+.reveal {
+  width: 100%;
+  height: 100%;
+}
+
+.exit {
+  position: fixed;
+  right: 24px;
+  top: 20px;
+  padding: 6px 14px;
+  font: 500 13px/1.6 ui-sans-serif, -apple-system, sans-serif;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  cursor: pointer;
+  z-index: 2147483647;
+}
+
+.peek-card {
+  display: inline-block;
+  padding: 1em 1.4em;
+  text-align: left;
+  color: var(--body);
+  background: color-mix(in srgb, var(--bg) 96%, transparent);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
+}

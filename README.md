@@ -141,7 +141,8 @@ four minutes before a client call. See [ADR 0008](docs/adr/0008-fail-soft-parsin
   model and is total, so render code has no branch that can fail.
 - **reveal.js 5.1.0**, vendored. A presentation must not depend on conference wifi to render its own
   slides.
-- **marked** for Markdown, vendored.
+- **marked** for Markdown, bundled into the build rather than fetched at runtime. Every dependency
+  is pinned exactly and the lockfile is committed — this extension has broad host access.
 - **esbuild** to build, `tsc --noEmit` to check, Node to run the tests directly as TypeScript.
 - **Firefox MV3** today; Chromium is a manifest and a copy script away by construction.
 

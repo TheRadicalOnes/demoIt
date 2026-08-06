@@ -1,0 +1,72 @@
+/*
+ * Themes are named for the application they sit on, not for their own appearance (ADR 0006).
+ * Matching the host application's background is what makes the overlay read as one surface rather
+ * than a slide sitting on top of an app.
+ *
+ * A theme is only custom properties. Adding one means adding a block here — no rules, no selectors,
+ * nothing in deck.css or overlay.css needs to know it exists.
+ *
+ * No webfonts: an extension cannot fetch them, and the local UI stack is what most enterprise
+ * applications resolve to on the same machine, which is the whole point of matching.
+ */
+
+:host {
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --code-font: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --heading-weight: 600;
+  --strong-weight: 600;
+
+  /* Light: Salesforce Lightning, most enterprise SaaS, anything Material-influenced. */
+  --bg: #ffffff;
+  --ink: #16325c;
+  --body: #3e3e3c;
+  --weak: #747474;
+  --rule: #e5e9ef;
+  --accent: #0176d3;
+  --accent-strong: #014486;
+  --accent-quiet: #d8edff;
+  --code-bg: #16325c;
+  --code-ink: #e8eef7;
+  --shot-border: #c9c9c9;
+  --shot-fill: #fafafa;
+  --shot-fill-alt: #f0f0f0;
+}
+
+/* Dark: an IDE, a terminal, a dark-mode dashboard. */
+:host(.theme-dark) {
+  --bg: #14171c;
+  --ink: #e8eef7;
+  --body: #c6d0dd;
+  --weak: #8a94a3;
+  --rule: #2a3240;
+  --accent: #57a8ea;
+  --accent-strong: #8fc9f7;
+  --accent-quiet: #1d2b3a;
+  --code-bg: #0c0e12;
+  --code-ink: #dfe7f2;
+  --shot-border: #3a4351;
+  --shot-fill: #1b1f26;
+  --shot-fill-alt: #22272f;
+}
+
+/*
+ * Contrast: a bright room and a weak projector. Near-black on white with heavier weights, because
+ * the first thing a washed-out projector destroys is thin type on a low-contrast ground.
+ */
+:host(.theme-contrast) {
+  --bg: #ffffff;
+  --ink: #000000;
+  --body: #1a1a1a;
+  --weak: #4a4a4a;
+  --rule: #b8b8b8;
+  --accent: #0b5cab;
+  --accent-strong: #063a6d;
+  --accent-quiet: #dce9f7;
+  --code-bg: #000000;
+  --code-ink: #ffffff;
+  --shot-border: #8a8a8a;
+  --shot-fill: #f4f4f4;
+  --shot-fill-alt: #e8e8e8;
+  --heading-weight: 700;
+  --strong-weight: 700;
+}

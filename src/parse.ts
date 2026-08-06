@@ -482,7 +482,36 @@ function splitSlideMetadata(
       });
     }
   }
-  return { meta, body: lines.slice(at).join("\n") };
+
+  const body = lines.slice(at);
+  reportMisplacedSettings(body, meta, where, diagnostics);
+  return { meta, body: body.join("\n") };
+}
+
+/*
+ * A setting written below the heading instead of above it is not metadata — it is a line of prose
+ * that will appear on the slide, in front of the audience, saying "reveal: bullets". Silently
+ * correct, silently wrong, and invisible until you are standing on that slide, so it is called out.
+ */
+function reportMisplacedSettings(
+  body: readonly string[],
+  meta: ReadonlyMap<string, string>,
+  where: string,
+  diagnostics: Diagnostic[],
+): void {
+  for (const line of body) {
+    const setting = settingOf(line.trim());
+    const key = setting?.key.toLowerCase();
+    if (key !== undefined && SLIDE_KEYS.has(key) && !meta.has(key)) {
+      diagnostics.push({
+        kind: "bad-setting",
+        where,
+        key,
+        value: setting?.value ?? "",
+        message: `"${key}" comes after the slide's content, so it is being shown as text. Settings go at the top of the slide.`,
+      });
+    }
+  }
 }
 
 /*

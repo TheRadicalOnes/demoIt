@@ -1,0 +1,233 @@
+/*
+ * Slide styling. Everything visual comes from the theme's custom properties (themes.css), so this
+ * file never names a colour.
+ *
+ * Type is driven through reveal's own custom properties rather than by overriding its rules, so
+ * the theme's internal sizing stays consistent with whatever we set here.
+ *
+ * Slides carry data-role, inferred by the parser from the shape of the markdown (ADR 0005). The
+ * four roles are a closed set, which is exactly what lets this file style all of them.
+ */
+
+:host {
+  --r-background-color: var(--bg);
+  --r-main-font: var(--font);
+  --r-heading-font: var(--font);
+  --r-code-font: var(--code-font);
+
+  /* Against reveal's 960x700 canvas. The theme default of 42px is roughly a third larger. */
+  --r-main-font-size: 30px;
+  --r-main-color: var(--body);
+  --r-block-margin: 16px;
+
+  --r-heading-color: var(--ink);
+  --r-heading-font-weight: var(--heading-weight);
+  --r-heading-line-height: 1.15;
+  --r-heading-letter-spacing: -0.02em;
+  --r-heading-text-transform: none;
+  --r-heading-text-shadow: none;
+  --r-heading-margin: 0 0 20px 0;
+  --r-heading1-size: 2.1em;
+  --r-heading2-size: 1.35em;
+  --r-heading3-size: 1.1em;
+
+  --r-link-color: var(--accent);
+  --r-link-color-hover: var(--accent-strong);
+  --r-selection-background-color: var(--accent-quiet);
+}
+
+.reveal {
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+.reveal strong {
+  font-weight: var(--strong-weight);
+  color: var(--ink);
+}
+
+/* ---- Roles ------------------------------------------------------------- */
+
+/* A slide holding nothing but an h1 opens the deck, so it gets the room to do it. */
+.reveal section[data-role="title"] h1 {
+  font-size: 2.6em;
+  margin: 0;
+}
+
+/* A slide holding nothing but an h2 is a change of subject. The short accent rule is the only
+   ornament in the deck. */
+.reveal section[data-role="section"] h2 {
+  font-size: 1.9em;
+  margin-bottom: 0;
+}
+
+.reveal section[data-role="section"] h2::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 3px;
+  margin: 0.55em auto 0;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+/*
+ * The paragraph directly under a heading reads as a subtitle, so it is styled as one. Structure
+ * again, rather than a class an author would have to know about.
+ */
+.reveal h1 + p,
+.reveal h2 + p {
+  margin-top: -6px;
+  font-size: 0.72em;
+  font-weight: 400;
+  line-height: 1.35;
+  color: var(--weak);
+}
+
+/* ---- Lists ------------------------------------------------------------- */
+
+.reveal ul,
+.reveal ol {
+  display: inline-block;
+  text-align: left;
+  font-size: 0.82em;
+}
+
+.reveal ul {
+  list-style: none;
+  margin-left: 0;
+}
+
+/* Accent markers carry the colour so the text itself can stay quiet. */
+.reveal ul > li {
+  position: relative;
+  padding-left: 0.95em;
+  margin-bottom: 0.35em;
+}
+
+.reveal ul > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.reveal ol > li {
+  margin-bottom: 0.3em;
+}
+
+/* ---- Call to action ---------------------------------------------------- */
+
+.reveal a.cta {
+  display: inline-block;
+  margin-top: 0.7em;
+  padding: 0.5em 1.5em;
+  font-size: 0.62em;
+  font-weight: 600;
+  color: var(--bg);
+  background: var(--accent);
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.reveal a.cta:hover {
+  background: var(--accent-strong);
+  color: var(--bg);
+}
+
+/* ---- Tables, code, keys ------------------------------------------------ */
+
+.reveal table {
+  width: 88%;
+  margin: 0 auto;
+  font-size: 0.55em;
+}
+
+.reveal table th,
+.reveal table td {
+  padding: 0.45em 0.6em;
+  border-bottom: 1px solid var(--rule);
+}
+
+.reveal table th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--body);
+}
+
+.reveal table td {
+  font-variant-numeric: tabular-nums;
+  color: var(--weak);
+}
+
+.reveal pre {
+  width: 88%;
+  box-shadow: none;
+  font-size: 0.5em;
+}
+
+.reveal pre code {
+  padding: 1em 1.2em;
+  font-size: 1em;
+  line-height: 1.4;
+  color: var(--code-ink);
+  background: var(--code-bg);
+  border-radius: 10px;
+}
+
+.reveal code {
+  font-family: var(--code-font);
+}
+
+.reveal blockquote {
+  width: 88%;
+  box-shadow: none;
+  font-style: normal;
+  background: none;
+  border-left: 3px solid var(--accent);
+  padding: 0.2em 0 0.2em 1em;
+  text-align: left;
+  color: var(--weak);
+}
+
+/* ---- Screenshots ------------------------------------------------------- */
+
+/*
+ * Sized against reveal's 960x700 canvas, not the viewport. A vh value here would be multiplied by
+ * the canvas scale factor and overflow the slide at some window sizes but not others.
+ */
+.reveal img {
+  max-width: 100%;
+  max-height: 380px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+}
+
+/*
+ * Names an image the deck refers to but the folder did not contain, so a deck can be rehearsed
+ * before its screenshots exist. Not an error state — the parser resolves a missing image into this
+ * as an ordinary variant.
+ */
+.reveal .shot-missing {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  max-height: 340px;
+  margin: 0.6em auto 0;
+  font-family: var(--code-font);
+  font-size: 0.4em;
+  color: var(--weak);
+  background: repeating-linear-gradient(
+    45deg,
+    var(--shot-fill),
+    var(--shot-fill) 12px,
+    var(--shot-fill-alt) 12px,
+    var(--shot-fill-alt) 24px
+  );
+  border: 1px dashed var(--shot-border);
+  border-radius: 8px;
+}

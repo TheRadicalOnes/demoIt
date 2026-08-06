@@ -1,0 +1,55 @@
+{
+  "manifest_version": 3,
+  "name": "demoIt",
+  "version": "0.1.0",
+  "description": "Present slides on top of the live application you are demoing, in the same browser tab.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "demoit@cesarparra.dev",
+      "strict_min_version": "115.0"
+    }
+  },
+  "permissions": [
+    "storage",
+    "unlimitedStorage"
+  ],
+  "action": {
+    "default_title": "demoIt"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "vendor/reveal.js",
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "themes.css",
+        "deck.css",
+        "overlay.css",
+        "vendor/reset.css",
+        "vendor/reveal.css",
+        "vendor/theme/white.css"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+}

@@ -258,6 +258,22 @@ test("metadata stops at the first line that is not a key/value pair", () => {
   assert.match(slide.html, /cue: this is prose/);
 });
 
+/*
+ * A setting below the heading is prose, and prose that says "reveal: bullets" goes on screen in
+ * front of the audience. Correct behaviour, invisible failure, so it is reported.
+ */
+test("a setting written after the slide's content is reported", () => {
+  const deck = parse("## Setup\n\nreveal: bullets\n\n- one");
+  assert.doesNotMatch(first(deck).html, /fragment/);
+  assert.deepEqual(kindsOf(deck), ["bad-setting"]);
+  assert.match(deck.diagnostics[0]?.message ?? "", /comes after the slide's content/);
+});
+
+test("a setting that was read at the top is not also reported in the body", () => {
+  const deck = parse("cue: Totals\n\n## Setup\n\nThe cue: line above is real metadata.");
+  assert.deepEqual(deck.diagnostics, []);
+});
+
 /* A typo must not silently become a paragraph — the pre-flight report is where it gets caught. */
 test("an unrecognized slide setting is reported with its key", () => {
   const deck = parse("kynd: live\n\n# Hi");
