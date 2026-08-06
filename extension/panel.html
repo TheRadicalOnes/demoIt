@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>demoIt</title>
+    <link rel="stylesheet" href="ui.css" />
+  </head>
+  <body class="panel">
+    <h1>demoIt</h1>
+
+    <!-- No deck: say so, say why it matters, and offer the one action that fixes it. -->
+    <section id="empty" hidden>
+      <p class="empty-why">
+        No deck loaded. demoIt needs a folder holding one <code>.md</code> file and its images.
+      </p>
+      <button id="choose" class="button primary" type="button">Choose a deck folder</button>
+    </section>
+
+    <section id="loaded" hidden>
+      <p id="name" class="deck-name"></p>
+      <p id="where" class="deck-where"></p>
+
+      <button id="present" class="button primary" type="button"></button>
+
+      <div id="issues" class="issues" hidden>
+        <span id="issues-count"></span>
+        <button id="view-report" class="link" type="button">View report</button>
+      </div>
+
+      <label class="switch">
+        <input id="armed" type="checkbox" />
+        <span class="switch-text">
+          Show demoIt on every page
+          <span class="switch-hint">
+            Off leaves the deck loaded but hides it everywhere, so it stops following you around
+            between demos.
+          </span>
+        </span>
+      </label>
+
+      <div class="panel-footer">
+        <button id="change" class="link" type="button">Change deck</button>
+        <button id="remove" class="link danger" type="button">Remove deck</button>
+      </div>
+    </section>
+
+    <script src="panel.js"></script>
+  </body>
+</html>

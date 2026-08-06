@@ -29,6 +29,7 @@ export interface ExtensionApi {
   };
   readonly runtime: {
     getURL(path: string): string;
+    openOptionsPage(): Promise<void>;
   };
   readonly action: {
     setBadgeText(details: { text: string }): void;

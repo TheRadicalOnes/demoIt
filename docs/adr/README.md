@@ -7,6 +7,8 @@ stays readable as a sequence of files rather than a document that quietly rewrit
 ## Status values
 
 - **Accepted** — in force.
+- **Accepted, amended by ADR NNNN** — still in force, but a later record changed part of it. Say
+  which part in the status line, so a reader knows what still stands.
 - **Superseded by ADR NNNN** — no longer in force, kept for the reasoning.
 
 ## Writing a new one
@@ -32,6 +34,7 @@ document.
 | [0008](0008-fail-soft-parsing.md) | Fail-soft parsing, with strictness in a pre-flight report | Accepted |
 | [0009](0009-typescript-parse-dont-validate.md) | TypeScript, strict, with parse-don't-validate | Accepted |
 | [0010](0010-build-toolchain.md) | esbuild to build, tsc to check, Node to test, deps vendored | Accepted |
-| [0011](0011-match-all-urls-with-arm-toggle.md) | Match all URLs, with a global arm/disarm toggle | Accepted |
+| [0011](0011-match-all-urls-with-arm-toggle.md) | Match all URLs, with a global arm/disarm toggle | Accepted, amended by 0014 |
 | [0012](0012-port-the-reference-implementation.md) | Port the reference implementation rather than rewrite | Accepted |
 | [0013](0013-chromium-readiness-as-discipline.md) | Chromium readiness is a discipline, not a directory layout | Accepted |
+| [0014](0014-toolbar-button-opens-a-panel.md) | The toolbar button opens a panel, not a toggle | Accepted |

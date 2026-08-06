@@ -1,0 +1,279 @@
+/*
+ * Shared by the toolbar panel and the deck page. One palette so the two surfaces cannot drift
+ * apart — they are the same product, seen at two sizes.
+ *
+ * Note this is NOT the deck's theme system (themes.css). That one styles slides drawn over someone
+ * else's application; this one styles demoIt's own windows, which follow the browser.
+ */
+
+:root {
+  color-scheme: light dark;
+  --ink: #16325c;
+  --body: #3e3e3c;
+  --weak: #747474;
+  --rule: #e5e9ef;
+  --accent: #0176d3;
+  --accent-strong: #014486;
+  --bg: #fff;
+  --panel: #f7f9fb;
+  --good: #2e844a;
+  --warn: #a86403;
+  --bad: #ba0517;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #e8eef7;
+    --body: #c6d0dd;
+    --weak: #8a94a3;
+    --rule: #2a3240;
+    --accent: #57a8ea;
+    --accent-strong: #8fc9f7;
+    --bg: #14171c;
+    --panel: #1b1f26;
+    --good: #45c65a;
+    --warn: #d99a2b;
+    --bad: #f2687c;
+  }
+}
+
+body {
+  margin: 0;
+  font: 400 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, sans-serif;
+  color: var(--body);
+  background: var(--bg);
+}
+
+h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.button {
+  padding: 7px 14px;
+  font-size: 14px;
+  color: var(--body);
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 7px;
+}
+
+.button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.button.primary {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.button.primary:hover {
+  color: #fff;
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+}
+
+.link {
+  padding: 0;
+  font-size: 13px;
+  color: var(--weak);
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.link:hover {
+  color: var(--accent);
+}
+
+.link.danger:hover {
+  color: var(--bad);
+}
+
+/* ---- Toolbar panel ----------------------------------------------------- */
+
+.panel {
+  width: 300px;
+  padding: 16px 16px 14px;
+}
+
+.panel h1 {
+  font-size: 15px;
+  letter-spacing: 0.01em;
+}
+
+.deck-name {
+  margin: 14px 0 2px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.deck-where {
+  margin: 0 0 14px;
+  font-size: 13px;
+  color: var(--weak);
+}
+
+.panel .button.primary {
+  width: 100%;
+  padding: 9px 0;
+  font-size: 15px;
+}
+
+/*
+ * The switch says what it does in words. The previous version was a toolbar button that toggled a
+ * boolean with no label, which meant knowing what it did required having been told.
+ */
+.switch {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  cursor: pointer;
+}
+
+.switch input {
+  margin: 2px 0 0;
+  accent-color: var(--accent);
+}
+
+.switch-text {
+  font-size: 13px;
+  color: var(--body);
+}
+
+.switch-hint {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--weak);
+}
+
+.empty-why {
+  margin: 10px 0 16px;
+  font-size: 13px;
+  color: var(--weak);
+}
+
+.issues {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--panel);
+  border-left: 3px solid var(--warn);
+  border-radius: 0 6px 6px 0;
+}
+
+.panel-footer {
+  display: flex;
+  gap: 14px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
+}
+
+/* ---- Deck page --------------------------------------------------------- */
+
+.page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+.page h1 {
+  margin-bottom: 4px;
+  font-size: 22px;
+}
+
+.lede {
+  margin: 0 0 28px;
+  color: var(--weak);
+}
+
+.pick {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 20px;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+}
+
+.summary {
+  margin: 24px 0 8px;
+  padding: 12px 14px;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--panel);
+  border-left: 3px solid var(--rule);
+  border-radius: 0 7px 7px 0;
+}
+
+.summary.good { border-left-color: var(--good); }
+.summary.warn { border-left-color: var(--warn); }
+.summary.bad { border-left-color: var(--bad); }
+
+.block {
+  margin-top: 26px;
+}
+
+.block h2 {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--weak);
+}
+
+.block.warn h2 {
+  color: var(--warn);
+}
+
+.block ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+}
+
+.block li {
+  padding: 7px 2px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12.5px;
+  border-bottom: 1px solid var(--rule);
+  overflow-wrap: anywhere;
+}
+
+footer {
+  margin-top: 40px;
+  padding-top: 16px;
+  font-size: 13px;
+  color: var(--weak);
+  border-top: 1px solid var(--rule);
+}

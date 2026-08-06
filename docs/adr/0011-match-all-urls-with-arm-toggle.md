@@ -1,6 +1,7 @@
 # ADR 0011 — Match all URLs, with a global arm/disarm toggle
 
-- **Status:** Accepted
+- **Status:** Accepted — amended by [ADR 0014](0014-toolbar-button-opens-a-panel.md), which moved the
+  off switch from the toolbar button into a panel. Matching all URLs and having an off switch stand.
 - **Date:** 2026-08-06
 
 ## Context

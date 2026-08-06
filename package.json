@@ -5,7 +5,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "esbuild src/content.ts src/background.ts src/options.ts --bundle --outdir=extension --format=iife --target=firefox115",
+    "build": "esbuild src/content.ts src/background.ts src/options.ts src/panel.ts --bundle --outdir=extension --format=iife --target=firefox115",
     "watch": "npm run build -- --watch",
     "test": "node --test 'test/*.test.ts'",
     "check": "tsc --noEmit"

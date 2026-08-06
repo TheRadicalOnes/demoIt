@@ -47,3 +47,28 @@ export async function isArmed(): Promise<boolean> {
   const stored = await api.storage.local.get(ARMED_KEY);
   return stored[ARMED_KEY] !== false;
 }
+
+export async function setArmed(armed: boolean): Promise<void> {
+  await api.storage.local.set({ [ARMED_KEY]: armed });
+}
+
+/*
+ * Where the deck is and whether it has the screen. Shared by every tab, so moving the deck in one
+ * place moves it everywhere — including from the panel, which is how Present works without the
+ * panel needing to talk to the content script.
+ */
+export interface DeckState {
+  readonly presenting: boolean;
+  readonly index: { h: number; v: number } | null;
+  /* Running-order position, so the panel can say "slide 3 of 7" without re-deriving it. */
+  readonly at: number | null;
+}
+
+export async function loadState(): Promise<DeckState | null> {
+  const stored = await api.storage.local.get(STATE_KEY);
+  return (stored[STATE_KEY] as DeckState | undefined) ?? null;
+}
+
+export async function saveState(state: DeckState): Promise<void> {
+  await api.storage.local.set({ [STATE_KEY]: state });
+}

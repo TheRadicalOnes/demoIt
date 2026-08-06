@@ -121,16 +121,19 @@ sitting on top of an app.
 
 1. `npm install && npm run build`
 2. Firefox → `about:debugging` → This Firefox → Load Temporary Add-on → pick `extension/manifest.json`
-3. Open the extension's options page and choose your deck folder.
-4. Read the pre-flight report: slide count, every CTA URL, every missing image, anything unrecognized.
-   This is the five-minutes-before-the-call check.
+3. Click the demoIt toolbar button. With no deck loaded it says so and offers to load one — choose
+   the folder holding your `.md` file and its images.
+4. Read the pre-flight report: slide count, every CTA URL, every missing image, anything
+   unrecognized. This is the five-minutes-before-the-call check.
 5. Go to the application you are demoing. The HUD is bottom-right. Click it to open the deck, arrows
    to move, `Esc` to close.
 
-The toolbar button arms and disarms demoIt globally. It matches every URL by design — a demo crosses
-domains you cannot predict, and an allowlist fails silently at the worst moment — so the off switch
-is how you stop it following you around. See
-[ADR 0011](docs/adr/0011-match-all-urls-with-arm-toggle.md).
+**The toolbar panel is the front door.** It shows which deck is loaded and where you are in it, and
+carries Present, the on/off switch, and deck loading. demoIt matches every URL by design — a demo
+crosses domains you cannot predict, and an allowlist fails silently at the worst moment — so the off
+switch is how you stop it following you around between demos. See
+[ADR 0011](docs/adr/0011-match-all-urls-with-arm-toggle.md) and
+[ADR 0014](docs/adr/0014-toolbar-button-opens-a-panel.md).
 
 A deck never fails to load. Problems become diagnostics in the pre-flight report, never a refusal
 four minutes before a client call. See [ADR 0008](docs/adr/0008-fail-soft-parsing.md).

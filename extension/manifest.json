@@ -14,7 +14,8 @@
     "unlimitedStorage"
   ],
   "action": {
-    "default_title": "demoIt"
+    "default_title": "demoIt",
+    "default_popup": "panel.html"
   },
   "options_ui": {
     "page": "options.html",

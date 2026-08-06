@@ -12,7 +12,7 @@
  */
 
 import { api } from "./api.ts";
-import { ARMED_KEY, STATE_KEY, loadDeck } from "./deck-store.ts";
+import { ARMED_KEY, STATE_KEY, loadDeck, type DeckState } from "./deck-store.ts";
 import { parseDeck, type Deck, type Slide } from "./parse.ts";
 
 interface RevealApi {
@@ -30,11 +30,6 @@ interface RevealApi {
 /* Supplied by vendor/reveal.js, loaded as a content script ahead of this one. */
 declare const Reveal: new (container: Element, config: Record<string, unknown>) => RevealApi;
 
-interface DeckState {
-  readonly presenting: boolean;
-  readonly index: { h: number; v: number } | null;
-}
-
 const SHEETS = [
   "vendor/reset.css",
   "vendor/reveal.css",
@@ -48,6 +43,7 @@ let model: Deck;
 let reveal: RevealApi;
 let ready = false;
 let applying = false;
+let current: Slide | undefined;
 
 let host: HTMLElement;
 let root: ShadowRoot;
@@ -290,15 +286,16 @@ function close(): Promise<void> {
 }
 
 function onSlideChanged(): void {
-  const current = reveal.getCurrentSlide();
-  const at = current ? reveal.getSlides().indexOf(current) : -1;
-  const now = model.slides[at];
+  const section = reveal.getCurrentSlide();
+  const at = section ? reveal.getSlides().indexOf(section) : -1;
+  // Held for save(), so the panel can say "slide 3 of 7" without re-deriving it from h/v.
+  current = model.slides[at];
 
-  stage.classList.toggle("peek", now?.role === "peek");
+  stage.classList.toggle("peek", current?.role === "peek");
   setText(".hud-count", `${at + 1} / ${model.slides.length}`);
-  label(".hud-now", now);
+  label(".hud-now", current);
   label(".hud-next", model.slides[at + 1]);
-  mirrorCta(now);
+  mirrorCta(current);
   void save(!stage.classList.contains("closed"));
 }
 
@@ -358,9 +355,12 @@ function save(presenting: boolean): Promise<void> {
   if (applying) {
     return Promise.resolve();
   }
-  return api.storage.local.set({
-    [STATE_KEY]: { presenting, index: ready ? reveal.getIndices() : null },
-  });
+  const state: DeckState = {
+    presenting,
+    index: ready ? reveal.getIndices() : null,
+    at: current?.at.index ?? null,
+  };
+  return api.storage.local.set({ [STATE_KEY]: state });
 }
 
 // Capture phase, so the application never sees the keys the deck is using.
