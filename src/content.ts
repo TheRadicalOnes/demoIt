@@ -12,7 +12,7 @@
  */
 
 import { api } from "./api.ts";
-import { ARMED_KEY, STATE_KEY, loadDeck, type DeckState } from "./deck-store.ts";
+import { ARMED_KEY, DECK_KEY, STATE_KEY, loadDeck, type DeckState, type StoredDeck } from "./deck-store.ts";
 import { parseDeck, type Deck, type Slide } from "./parse.ts";
 
 interface RevealApi {
@@ -25,6 +25,7 @@ interface RevealApi {
   getSlides(): readonly HTMLElement[];
   getCurrentSlide(): HTMLElement | undefined;
   on(event: string, listener: () => void): void;
+  destroy?(): void;
 }
 
 /* Supplied by vendor/reveal.js, loaded as a content script ahead of this one. */
@@ -41,9 +42,12 @@ const SHEETS = [
 
 let model: Deck;
 let reveal: RevealApi;
+let built = false;
 let ready = false;
 let applying = false;
 let current: Slide | undefined;
+let blobUrls: string[] = [];
+let sheets: string | null = null;
 
 let host: HTMLElement;
 let root: ShadowRoot;
@@ -53,13 +57,61 @@ let hud: HTMLElement;
 void boot();
 
 async function boot(): Promise<void> {
-  const stored = await loadDeck();
-  if (stored === null) {
-    return;
-  }
+  // Storage is shared by every tab, so a change here is a deck arriving or leaving, the deck moving
+  // somewhere else, or demoIt being switched on or off.
+  //
+  // Registered before the first build, and never torn down, because a tab that loaded with no deck
+  // still has to notice when one is loaded — otherwise the HUD only appears after a refresh.
+  api.storage.onChanged.addListener((changes, area) => {
+    if (area !== "local") {
+      return;
+    }
+    if (changes[DECK_KEY]) {
+      rebuild(changes[DECK_KEY].newValue as StoredDeck | undefined);
+      return;
+    }
+    if (!built) {
+      return;
+    }
+    if (changes[ARMED_KEY]) {
+      arm(changes[ARMED_KEY].newValue !== false);
+    }
+    if (changes[STATE_KEY]) {
+      follow(changes[STATE_KEY].newValue as DeckState | undefined);
+    }
+  });
 
-  model = parseDeck(stored.source, blobAssets(stored.assets), stored.name);
+  const stored = await loadDeck();
+  if (stored !== null) {
+    // Through the same queue as any later change, so a deck loaded while this one is still
+    // building cannot interleave with it.
+    rebuild(stored);
+  }
+}
+
+/*
+ * Builds are serialised. Picking a folder twice in quick succession would otherwise interleave two
+ * builds through the awaits below and leave two overlays on the page.
+ */
+let pending: Promise<void> = Promise.resolve();
+
+function rebuild(stored: StoredDeck | undefined): void {
+  const next = async (): Promise<void> => {
+    teardown();
+    if (stored) {
+      await build(stored);
+    }
+  };
+  pending = pending.then(next, next);
+}
+
+async function build(stored: StoredDeck): Promise<void> {
+  const assets = blobAssets(stored.assets);
+  blobUrls = [...assets.values()];
+
+  model = parseDeck(stored.source, assets, stored.name);
   if (model.slides.length === 0) {
+    releaseAssets();
     return;
   }
 
@@ -69,11 +121,15 @@ async function boot(): Promise<void> {
   root = host.attachShadow({ mode: "open" });
   document.documentElement.append(host);
 
-  const sheets = await Promise.all(SHEETS.map(fetchText));
+  if (sheets === null) {
+    const files = await Promise.all(SHEETS.map(fetchText));
+    // Custom properties are declared on :root, which matches nothing inside a shadow root.
+    sheets = files.join("\n").replace(/:root\b/g, ":host");
+  }
   const style = document.createElement("style");
-  // Custom properties are declared on :root, which matches nothing inside a shadow root.
-  style.textContent = sheets.join("\n").replace(/:root\b/g, ":host");
+  style.textContent = sheets;
   root.append(style, buildHud(), buildStage());
+  built = true;
 
   const settings = await api.storage.local.get([STATE_KEY, ARMED_KEY]);
   arm(settings[ARMED_KEY] !== false);
@@ -99,20 +155,28 @@ async function boot(): Promise<void> {
     open();
   }
   onSlideChanged();
+}
 
-  // Storage is shared by every tab, so a change here is the deck moving somewhere else, or the
-  // toolbar button arming or disarming the whole thing.
-  api.storage.onChanged.addListener((changes, area) => {
-    if (area !== "local") {
-      return;
-    }
-    if (changes[ARMED_KEY]) {
-      arm(changes[ARMED_KEY].newValue !== false);
-    }
-    if (changes[STATE_KEY]) {
-      follow(changes[STATE_KEY].newValue as DeckState | undefined);
-    }
-  });
+/* Removing the host removes the shadow root and everything in it, but the keyboard listener is on
+ * the window and the blob URLs are held by the browser, so both are released by hand. */
+function teardown(): void {
+  if (!built) {
+    return;
+  }
+  window.removeEventListener("keydown", onKeyDown, true);
+  reveal.destroy?.();
+  host.remove();
+  releaseAssets();
+  built = false;
+  ready = false;
+  current = undefined;
+}
+
+function releaseAssets(): void {
+  for (const url of blobUrls) {
+    URL.revokeObjectURL(url);
+  }
+  blobUrls = [];
 }
 
 /*

@@ -72,7 +72,19 @@ Match everything; give the user an off switch.
 `storage.onChanged` fires in every tab **including the one that wrote the change**. Without an
 `applying` flag suppressing the write-back, two open tabs ping-pong indefinitely.
 
-### 9. Firefox MV3 specifics
+### 9. The storage listener is registered before the first build, and independently of it
+
+A tab that loaded before any deck existed still has to notice when one arrives. If the listener is
+registered as part of building the overlay — the natural place for it — then a tab with no deck
+never listens, and loading a deck appears to do nothing until the page is refreshed.
+
+The same applies in reverse: removing the deck has to tear the overlay down in tabs that already
+have one.
+
+Builds are queued rather than run on arrival, including the first one. Two decks loaded in quick
+succession would otherwise interleave through the `await`s and leave two overlays on the page.
+
+### 10. Firefox MV3 specifics
 
 `browser_specific_settings.gecko.id` is required. `web_accessible_resources` takes
 `{resources, matches}`. Background is `{"scripts": [...]}`, not a service worker. See ADR 0013 for

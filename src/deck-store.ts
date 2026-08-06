@@ -10,7 +10,7 @@ import { api } from "./api.ts";
 
 export const ARMED_KEY = "armed";
 export const STATE_KEY = "deckState";
-const DECK_KEY = "deck";
+export const DECK_KEY = "deck";
 const ISSUES_KEY = "deckIssues";
 
 export interface StoredDeck {
