@@ -109,8 +109,9 @@ valid deck.
 Slide settings go at the top of a slide, before any prose.
 
 **Appearance is inferred from structure.** A slide with only an `h1` is a title slide; only an `h2`
-is a section divider; everything else is a content slide. Write normal Markdown and the deck looks
-intentional.
+is a section divider; everything else is a content slide. Two or more `###` sub-headings on a slide
+become side-by-side columns, each holding its heading and everything under it. Write normal
+Markdown and the deck looks intentional.
 
 **Themes are named for the application they sit on** — `light` for Lightning and most enterprise
 SaaS, `dark` for an IDE or a terminal, `contrast` for a bright room and a weak projector. Matching

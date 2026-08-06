@@ -164,11 +164,40 @@ function parseSlide(source: string, at: Position, context: DeckContext): Slide {
   return {
     at,
     role: peek ? "peek" : roleOf(tokens),
-    html: markdown.parser(tokens),
+    html: render(markdown, tokens),
     cue: meta.get("cue") ?? headingText(tokens) ?? "Untitled",
     kind: resolveKind(meta.get("kind"), context.kinds, at.label, context.diagnostics),
     cta: resolveCta(meta.get("cta"), context.baseUrl, at.label, context.diagnostics),
   };
+}
+
+/*
+ * Two or more sub-headings on a slide are side-by-side columns (ADR 0015). Grouping has to happen
+ * here rather than in CSS, which cannot gather a heading and the siblings that follow it — so the
+ * parser wraps each group, and the renderer receives html that already describes the layout.
+ *
+ * One sub-heading is a sub-heading. Columns start at two, because that is when an author is
+ * comparing things.
+ */
+function render(markdown: Marked, tokens: readonly Token[]): string {
+  const heads = tokens.filter(isColumnHead);
+  if (heads.length < 2) {
+    return markdown.parser([...tokens]);
+  }
+
+  const lead = tokens.slice(0, tokens.indexOf(heads[0] as Token));
+  const columns = heads.map((head, at) => {
+    const from = tokens.indexOf(head);
+    const next = heads[at + 1];
+    const to = next === undefined ? tokens.length : tokens.indexOf(next);
+    return `<div class="col">${markdown.parser(tokens.slice(from, to))}</div>`;
+  });
+
+  return `${markdown.parser([...lead])}<div class="cols">${columns.join("")}</div>`;
+}
+
+function isColumnHead(token: Token): token is Tokens.Heading {
+  return token.type === "heading" && token.depth === 3;
 }
 
 /*

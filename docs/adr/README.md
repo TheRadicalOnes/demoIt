@@ -38,3 +38,4 @@ document.
 | [0012](0012-port-the-reference-implementation.md) | Port the reference implementation rather than rewrite | Accepted |
 | [0013](0013-chromium-readiness-as-discipline.md) | Chromium readiness is a discipline, not a directory layout | Accepted |
 | [0014](0014-toolbar-button-opens-a-panel.md) | The toolbar button opens a panel, not a toggle | Accepted |
+| [0015](0015-columns-from-sub-headings.md) | Two or more sub-headings on a slide are columns | Accepted |

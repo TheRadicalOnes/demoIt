@@ -84,6 +84,45 @@
   color: var(--weak);
 }
 
+/* ---- Columns ----------------------------------------------------------- */
+
+/*
+ * Built by the parser from two or more sub-headings on a slide (ADR 0015). Each column is a
+ * heading and everything under it until the next one.
+ */
+.reveal .cols {
+  display: flex;
+  gap: 2.2em;
+  justify-content: center;
+  text-align: left;
+}
+
+.reveal .cols > .col {
+  flex: 1 1 0;
+}
+
+/* The sub-heading becomes the column's label: quiet, small, and carrying the accent so the
+   content under it can stay plain. */
+.reveal .cols h3 {
+  margin-bottom: 0.35em;
+  font-size: 0.5em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Columns are narrow, so their lists give back the size a full-width list can afford. */
+.reveal .cols ul,
+.reveal .cols ol {
+  display: block;
+  font-size: 0.7em;
+}
+
+.reveal .cols li {
+  margin-bottom: 0.2em;
+}
+
 /* ---- Lists ------------------------------------------------------------- */
 
 .reveal ul,

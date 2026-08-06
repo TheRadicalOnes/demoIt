@@ -225,6 +225,34 @@ test("a slide with no heading and no cue is Untitled", () => {
   assert.equal(only("Just some prose.").cue, "Untitled");
 });
 
+/*
+ * Columns are grouped by the parser because CSS cannot gather a heading and the siblings that
+ * follow it (ADR 0015).
+ */
+test("two or more sub-headings become columns", () => {
+  const slide = only("## Order processing\n\n### Updated\n\n- Shipping\n\n### Not in scope\n\n- Fees");
+  assert.equal(slide.html.match(/<div class="col">/g)?.length, 2);
+  assert.match(slide.html, /<div class="cols">/);
+  // Content above the first sub-heading stays outside the columns.
+  assert.match(slide.html, /<h2>Order processing<\/h2>\s*<div class="cols">/);
+});
+
+test("each column keeps its own heading and content", () => {
+  const slide = only("### One\n\n- a\n\n### Two\n\n- b");
+  assert.match(slide.html, /<div class="col"><h3>One<\/h3>[\s\S]*?a[\s\S]*?<\/div>/);
+  assert.match(slide.html, /<div class="col"><h3>Two<\/h3>[\s\S]*?b[\s\S]*?<\/div>/);
+});
+
+test("a single sub-heading is a sub-heading, not a column", () => {
+  const slide = only("## Setup\n\n### Details\n\n- a");
+  assert.doesNotMatch(slide.html, /class="cols"/);
+});
+
+test("a lede above the columns is not swallowed by them", () => {
+  const slide = only("## Flow actions\n\nThree new actions\n\n### New\n\n- a\n\n### Changed\n\n- b");
+  assert.match(slide.html, /<p>Three new actions<\/p>\s*<div class="cols">/);
+});
+
 /* Resolved into the html, so the renderer never re-reads what the parser produced. */
 test("reveal: bullets marks list items as fragments", () => {
   const slide = only("reveal: bullets\n\n- one\n- two");
