@@ -1,0 +1,26 @@
+{
+  "name": "demoit",
+  "version": "0.1.0",
+  "description": "Present slides on top of the live application you are demoing, in the same browser tab.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "esbuild src/content.ts src/background.ts src/options.ts --bundle --outdir=extension --format=iife --target=firefox115",
+    "watch": "npm run build -- --watch",
+    "test": "node --test 'test/*.test.ts'",
+    "check": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cesarParra/demoIt.git"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "marked": "18.0.9"
+  },
+  "devDependencies": {
+    "@types/node": "26.1.2",
+    "esbuild": "0.28.1",
+    "typescript": "7.0.2"
+  }
+}

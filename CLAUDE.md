@@ -67,6 +67,9 @@ nothing appears to break, you have most likely reproduced the original bug witho
   a role should be a compile error everywhere it must be handled.
 - **The HUD is on the shared screen.** Nothing private, diagnostic, or embarrassing renders there.
   The toolbar badge is the presenter-only surface.
+- **Pin every dependency exactly.** No `^` or `~`, `.npmrc` sets `save-exact=true`, and
+  `package-lock.json` is committed. Upgrades are deliberate acts — this extension has broad host
+  access on every page the user visits.
 
 ## Commands
 

@@ -46,6 +46,24 @@ conference wifi to render its own slides. This holds regardless of the hosted ba
 `marked` is used rather than a hand-rolled Markdown subset: CommonMark edge cases are where writing
 less code buys a worse algorithm, and non-technical authors will reach them.
 
+> **Note added during implementation — clarification, not a change of decision.**
+>
+> "Vendored" is implemented two different ways, because the two dependencies are consumed
+> differently.
+>
+> `reveal.js` is a committed file in `extension/vendor/`. It has to be: the manifest loads it as a
+> content script so that `Reveal` exists as a global before `content.js` runs.
+>
+> `marked` is an npm dependency that esbuild bundles into the build output. The constraint this ADR
+> protects — nothing fetched from a network at runtime — holds either way, since the bundle is
+> self-contained. Committing a copy of `marked` as well would add a file to review on every update
+> for no gain.
+>
+> **All dependency versions are pinned exactly**, with no `^` or `~` ranges, and `package-lock.json`
+> is committed. npm has seen repeated supply-chain compromises, and this tool runs on every page the
+> user visits with broad host access — an unattended transitive upgrade is not a risk worth carrying
+> for the convenience of automatic patch bumps. Upgrades are deliberate acts.
+
 ## Consequences
 
 - The load-unpacked loop gains a build step. `npm run watch` keeps it to one action.

@@ -94,6 +94,20 @@ hidden fragment still occupies layout space, so stacked images overflow the slid
 is expressible as two consecutive slides at no cost. Revisit if image-heavy decks make the extra
 slides tedious.
 
+### Deferring the deck runtime off the every-page path
+
+The content script is injected into every page the user visits, armed or not, deck or not
+([ADR 0011](docs/adr/0011-match-all-urls-with-arm-toggle.md)), so everything it bundles is paid on
+every page load. `marked` is ~41 KB of that and only ever runs when a deck is actually loaded.
+
+Not addressed in v1 because reveal.js is an order of magnitude larger and must be live at page load
+anyway (`docs/runtime-constraints.md` #4), so deferring the parser alone trims maybe a tenth of an
+unconditional cost. Firefox MV3 content scripts cannot be ESM, so it also cannot be a plain dynamic
+`import()` — it needs a second build entry in `web_accessible_resources`.
+
+**Revisit when:** the extension is measurably slowing down page loads, or reveal itself gets deferred
+— at which point doing both together is the change worth making.
+
 ### Packaging and signing
 
 v1 loads via `about:debugging` as a temporary add-on. Stage 2, peers installing it themselves, is

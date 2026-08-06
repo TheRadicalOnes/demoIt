@@ -1,0 +1,5 @@
+node_modules/
+
+# Build output. extension/ also holds committed sources: manifest.json,
+# stylesheets, options.html, vendor/.
+extension/*.js
