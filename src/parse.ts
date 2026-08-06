@@ -20,7 +20,7 @@ import { Lexer, Marked, Renderer, type Token, type Tokens } from "marked";
 /* An href that has already been resolved. Only this module can make one. */
 export type AbsoluteUrl = string & { readonly __absolute: unique symbol };
 
-const THEMES = ["light", "dark", "contrast"] as const;
+export const THEMES = ["light", "dark", "contrast"] as const;
 export type ThemeName = (typeof THEMES)[number];
 
 export interface Kind {

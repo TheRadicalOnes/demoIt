@@ -7,7 +7,7 @@
  */
 
 import { clearDeck, loadDeck, saveDeck, type StoredDeck } from "./deck-store.ts";
-import { parseDeck, type Deck, type Diagnostic } from "./parse.ts";
+import { THEMES, parseDeck, type Deck, type Diagnostic } from "./parse.ts";
 
 const MARKDOWN = /\.(md|markdown)$/i;
 const IMAGE = /\.(png|jpe?g|gif|webp|svg|avif)$/i;
@@ -84,6 +84,18 @@ function render(deck: Deck | null, errors: readonly string[]): void {
     `${deck.title} — ${deck.slides.length} slide${deck.slides.length === 1 ? "" : "s"}, ` +
     (issues === 0 ? "nothing to fix." : `${issues} thing${issues === 1 ? "" : "s"} to look at.`);
   summary.className = issues === 0 ? "summary good" : "summary warn";
+
+  /*
+   * Settings a deck did not set are still listed, with their default and what else they accept.
+   * A setting nothing mentions is a setting nobody knows exists — which is how the theme went
+   * unnoticed until someone went looking for a control that was never going to be here.
+   */
+  const kinds = [...new Set(deck.slides.map((slide) => slide.kind.label))];
+  section("Deck settings — change these in the frontmatter at the top of your .md file", [
+    `theme: ${deck.theme}   (${THEMES.join(", ")})`,
+    `baseUrl: ${deck.baseUrl ?? "not set — CTAs must be absolute URLs"}`,
+    `kinds in use: ${kinds.join(", ")}   (rename or add with kind.<name>.label and .color)`,
+  ]);
 
   section("Running order", deck.slides.map((slide) =>
     `${slide.at.label}  ·  ${slide.kind.label}  ·  ${slide.cue}`,
