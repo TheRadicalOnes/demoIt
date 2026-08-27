@@ -270,3 +270,18 @@
   border: 1px dashed var(--shot-border);
   border-radius: 8px;
 }
+
+/*
+ * An image alone on a slide is the slide, so it takes the whole canvas and drops the frame. 700px
+ * is the canvas height, for the same reason the cap above is a pixel value: a vh here would be
+ * multiplied by reveal's scale factor.
+ */
+.reveal section[data-role="content"] > p:only-child:has(> img:only-child) {
+  margin: 0;
+}
+
+.reveal section[data-role="content"] > p:only-child > img:only-child {
+  max-height: 700px;
+  border: none;
+  border-radius: 0;
+}
