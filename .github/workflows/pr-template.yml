@@ -1,0 +1,13 @@
+# Adds the org PR template to PRs opened without it (Gearset, CLI, IDEs).
+# Logic lives in TheRadicalOnes/.github; edit it there.
+name: PR template
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  fill:
+    uses: TheRadicalOnes/.github/.github/workflows/pr-template.yml@main
+    permissions:
+      pull-requests: write
